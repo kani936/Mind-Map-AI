@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindMap AI – Smart Notes to Mind Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- Animated background orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- ── Nav ── -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="url(#logoGrad)"/>
+          <circle cx="12" cy="12" r="3" fill="white"/>
+          <circle cx="6" cy="8" r="2" fill="white" opacity=".7"/>
+          <circle cx="18" cy="8" r="2" fill="white" opacity=".7"/>
+          <circle cx="6" cy="16" r="2" fill="white" opacity=".7"/>
+          <circle cx="18" cy="16" r="2" fill="white" opacity=".7"/>
+          <line x1="12" y1="12" x2="6" y2="8" stroke="white" stroke-width="1.2" opacity=".5"/>
+          <line x1="12" y1="12" x2="18" y2="8" stroke="white" stroke-width="1.2" opacity=".5"/>
+          <line x1="12" y1="12" x2="6" y2="16" stroke="white" stroke-width="1.2" opacity=".5"/>
+          <line x1="12" y1="12" x2="18" y2="16" stroke="white" stroke-width="1.2" opacity=".5"/>
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#a78bfa"/>
+              <stop offset="100%" stop-color="#6366f1"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span>MindMap <span class="accent">AI</span></span>
+    </div>
+    <div class="nav-badge">✦ Powered by NLP</div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <div class="hero-chip">✦ AI-Powered Mind Mapping</div>
+    <h1 class="hero-title">
+      Transform your notes into<br/>
+      <span class="gradient-text">visual mind maps</span>
+    </h1>
+    <p class="hero-sub">Paste any text — articles, lecture notes, brainstorms — and watch AI structure it into a beautiful, interactive mind map in seconds.</p>
+  </header>
+
+  <!-- ── Main ── -->
+  <main class="container">
+
+    <!-- Input Card -->
+    <div class="card input-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon">📝</div>
+          <div>
+            <div class="card-title">Your Notes</div>
+            <div class="card-subtitle">Paste anything — the messier, the better</div>
+          </div>
+        </div>
+        <span id="char-count" class="char-pill">0 chars</span>
+      </div>
+
+      <div class="textarea-wrap">
+        <textarea
+          id="notes-input"
+          class="notes-textarea"
+          placeholder="e.g. Machine learning is a subset of artificial intelligence. It includes supervised learning which uses labeled data, unsupervised learning which finds hidden patterns, and reinforcement learning which uses rewards and penalties to train agents…"
+          spellcheck="true"
+        ></textarea>
+        <div class="textarea-glow"></div>
+      </div>
+
+      <div id="error-msg" class="error-msg" role="alert" aria-live="polite" hidden>
+        <span class="error-icon">⚠</span>
+        <span id="error-text"></span>
+      </div>
+
+      <div class="card-footer">
+        <div class="shortcut-hint">
+          <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to generate
+        </div>
+        <button id="generate-btn" class="btn-generate">
+          <span class="btn-generate-inner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            Generate Mind Map
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader" class="loader-card" hidden>
+      <div class="loader-visual">
+        <div class="loader-ring ring-1"></div>
+        <div class="loader-ring ring-2"></div>
+        <div class="loader-ring ring-3"></div>
+        <div class="loader-dot"></div>
+      </div>
+      <div class="loader-text">Analysing your notes</div>
+      <div class="loader-steps">
+        <span class="step active" id="step-1">Extracting keywords</span>
+        <span class="step-sep">→</span>
+        <span class="step" id="step-2">Building structure</span>
+        <span class="step-sep">→</span>
+        <span class="step" id="step-3">Rendering map</span>
+      </div>
+    </div>
+
+    <!-- Output Card -->
+    <div id="output-panel" class="card output-card" hidden>
+      <div class="output-header">
+        <div class="output-title-wrap">
+          <div class="output-icon">🗺</div>
+          <div>
+            <div id="map-title" class="output-title"></div>
+            <div class="output-subtitle">Click any node to expand or collapse</div>
+          </div>
+        </div>
+        <div class="output-actions">
+          <button id="expand-all-btn" class="btn-tool" title="Expand all">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            Expand
+          </button>
+          <button id="collapse-all-btn" class="btn-tool" title="Collapse all">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14h6v6M14 4h6v6M4 20l7-7M20 4l-7 7"/></svg>
+            Collapse
+          </button>
+          <button id="reset-btn" class="btn-tool btn-tool-danger" title="Start over">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+      <div id="mindmap-container" class="mindmap-container"></div>
+      <div class="map-legend">
+        <span class="legend-item"><span class="legend-dot dot-root"></span>Main Topic</span>
+        <span class="legend-item"><span class="legend-dot dot-child"></span>Subtopic</span>
+        <span class="legend-item"><span class="legend-dot dot-leaf"></span>Detail</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <span>MindMap AI · Built with Flask &amp; D3.js</span>
+    <a href="https://github.com/" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="/static/script.js"></script>
+</body>
+</html>
